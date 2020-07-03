@@ -15,22 +15,18 @@ class VaultProvider(DependencyProvider):
 
     def get_kv_secret(self, path, mount_point=None):
         mount_point = mount_point if mount_point else self.mount_point
-        try:
-            secret = self.client.secrets.kv.\
-                read_secret_version(mount_point=mount_point, path=path)
-            return secret["data"]
-        except Exception:
-            return None
+        secret = self.client.secrets.kv.\
+            read_secret_version(mount_point=mount_point, path=path)
+
+        return secret["data"]
 
     def get_kv_secrets_list(self, path, mount_point=None):
         mount_point = mount_point if mount_point else self.mount_point
-        try:
-            secret = self.client.secrets.kv.\
-                list_secrets(path=path, mount_point=mount_point)
-            path = path if path.endswith("/") else path + "/"
-            return list(map(lambda key: path + key, secret["data"]["keys"]))
-        except Exception:
-            return None
+        secret = self.client.secrets.kv.\
+            list_secrets(path=path, mount_point=mount_point)
+        path = path if path.endswith("/") else path + "/"
+
+        return [path + key for key in secret["data"]["keys"]]
 
     def get_connection(self):
         return self.client
