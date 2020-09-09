@@ -13,6 +13,12 @@ class VaultProvider(DependencyProvider):
             self.client.token = self.container.config.\
                 get("VAULT_TOKEN", "")
 
+    def get_connection(self):
+        return self.client
+
+    def get_dependency(self, worker_ctx):
+        return self
+
     def get_kv_secret(self, path, mount_point=None):
         mount_point = mount_point if mount_point else self.mount_point
         secret = self.client.secrets.kv.\
@@ -28,8 +34,22 @@ class VaultProvider(DependencyProvider):
 
         return [path + key for key in secret["data"]["keys"]]
 
-    def get_connection(self):
-        return self.client
+    def create_or_update_kv_secret(self, path, secret, mount_point=None):
+        mount_point = mount_point if mount_point else self.mount_point
 
-    def get_dependency(self, worker_ctx):
-        return self
+        response = self.client.secrets.kv.v2.create_or_update_secret(
+            mount_point=mount_point,
+            path=path,
+            secret=secret,
+        )
+        return response
+
+    def patch_kv_secret(self, path, secret, mount_point=None):
+        mount_point = mount_point if mount_point else self.mount_point
+
+        response = self.client.secrets.kv.v2.patch(
+            mount_point=mount_point,
+            path=path,
+            secret=secret,
+        )
+        return response
