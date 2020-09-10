@@ -20,6 +20,8 @@ jobs:
         poetry install
     - name: Lint check
       run: poetry run black --check .
+    - name: Tests
+      run: poetry run pytest
   publish:
     runs-on: ubuntu-latest
     needs: build
