@@ -49,6 +49,9 @@ exclude = '''
 )
 '''
 
+[tool.pytest.ini_options]
+python_files = "test_*.py tests_*.py"
+
 [build-system]
 requires = ["poetry>=0.12"]
 build-backend = "poetry.masonry.api"
