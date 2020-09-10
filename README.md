@@ -45,7 +45,7 @@ vault.get_kv_secrets_list(mount_point="example", path="path")
 ```
 
 
-## KV Secret Data
+## Get KV Secret Data
 
 The method `get_kv_secret` returns the content cotained in a given path
 
@@ -68,4 +68,56 @@ vault.get_kv_secret(mount_point="example", path="path/test")
       }
    }
 ]
+```
+
+## Create or Update KV Secret
+Method to create an secret or update an existing one in a given path. 
+
+```python
+vault = VaultProvider()
+secret = {"example": "Test", "number": 42}
+vault.create_or_update_kv_secret(mount_point="example", path="path/test", secret=secret)
+```
+```
+{
+   'request_id': '4ce62ee7-0f88-3efc-d745-5e2fbc423789',
+   'lease_id': '',
+   'renewable': False,
+   'lease_duration': 0,
+   'data': {
+      'created_time': '2020-09-10T00:25:40.92411625Z',
+      'deletion_time': '',
+      'destroyed': False,
+      'version': 1
+   },
+   'wrap_info': None,
+   'warnings': None,
+   'auth': None
+}
+```
+
+## Patch KV Secret
+Method to update an existing path. Either to add a new key/value to the secret and/or update the value for an existing key. Raises an `hvac.exceptions.InvalidRequest` if the path hasn’t been written to previously.
+
+```python
+vault = VaultProvider()
+secret = {"example": "New Test"}
+vault.patch_kv_secret(mount_point="example", path="path/test", secret=secret)
+```
+```
+{
+   'request_id': '7bf2a869-dc66-efa2-3679-814ef76fb447',
+   'lease_id': '',
+   'renewable': False,
+   'lease_duration': 0,
+   'data': {
+      'created_time': '2020-09-10T00:31:32.6783082Z',
+      'deletion_time': '',
+      'destroyed': False,
+      'version': 2
+   },
+   'wrap_info': None,
+   'warnings': None,
+   'auth': None
+}
 ```
