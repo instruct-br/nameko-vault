@@ -40,4 +40,4 @@ jobs:
       run: poetry build
     - name: Publish package
       run: |
-        poetry publish -u ${{ secrets.PYPI_USER }} -p ${{ secrets.PYPI_PASS }} --no-interaction
+        poetry publish -u "__token__" -p ${{ secrets.PYPI_TOKEN }} --no-interaction
