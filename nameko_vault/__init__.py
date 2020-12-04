@@ -55,7 +55,9 @@ class VaultProvider(DependencyProvider):
         )
         return response
 
-    def delete_metadata_and_all_versions_kv_secret(self, path, mount_point=None):
+    def delete_metadata_and_all_versions_kv_secret(
+        self, path, mount_point=None
+    ):
         mount_point = mount_point if mount_point else self.mount_point
 
         response = self.client.secrets.kv.v2.delete_metadata_and_all_versions(
