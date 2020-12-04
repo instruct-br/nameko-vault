@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "nameko-vault"
-version = "0.2.0"
+version = "0.3.0"
 description = "A Nameko extension to provide connection with Vault"
 authors = ["Instruct Developers <oss@instruct.com.br>"]
 license = "MIT"

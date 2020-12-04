@@ -20,6 +20,12 @@ class TestVaultService:
 
         return response
 
+    @rpc
+    def delete_metadata_and_all_versions_secret(self, path):
+        response = self.vault.delete_metadata_and_all_versions_kv_secret(path)
+
+        return response
+
 
 def test_vault_service_create_secret():
     service = worker_factory(TestVaultService)
@@ -74,3 +80,15 @@ def test_vault_service_patch_secret():
 
     assert service.patch_secret(path, secret) == mock_return
     service.vault.patch_kv_secret.assert_called_once_with(path, secret)
+
+
+def test_vault_service_delete_metadata_and_all_versions():
+    service = worker_factory(TestVaultService)
+
+    path = "path/test"
+    mock_return = 204
+    method = service.vault.delete_metadata_and_all_versions_kv_secret
+    method.return_value = mock_return
+
+    assert service.delete_metadata_and_all_versions_secret(path) == mock_return
+    method.assert_called_once_with(path)
