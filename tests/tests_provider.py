@@ -5,7 +5,8 @@ from nameko_vault import VaultProvider
 
 
 class TestVaultService:
-    name = "test_vault_service"
+
+    name = "test_vault_service"  # test
     vault = VaultProvider(mount_point="test")
 
     @rpc
