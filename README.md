@@ -44,7 +44,6 @@ vault.get_kv_secrets_list(mount_point="example", path="path")
 ['path/test1', 'path/test2']
 ```
 
-
 ## Get KV Secret Data
 
 The method `get_kv_secret` returns the content cotained in a given path
@@ -71,7 +70,7 @@ vault.get_kv_secret(mount_point="example", path="path/test")
 ```
 
 ## Create or Update KV Secret
-Method to create an secret or update an existing one in a given path. 
+Method to create an secret or update an existing one in a given path.
 
 ```python
 vault = VaultProvider()
@@ -120,4 +119,13 @@ vault.patch_kv_secret(mount_point="example", path="path/test", secret=secret)
    'warnings': None,
    'auth': None
 }
+```
+
+## Delete KV Secret (metadata and all versions)
+Method to delete an existing path with all his versions and metadata on a given path.
+
+```python
+vault = VaultProvider()
+path = "path/secret"
+vault.delete_metadata_and_all_versions_kv_secret(path)
 ```
