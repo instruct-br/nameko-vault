@@ -82,7 +82,7 @@ class EnvLoaderProvider(DependencyProvider):
 
     def setup(self):
         logging.info(
-            f"Importing env vars from Vault, mount_poit: '{self.mount_point}',"
+            f"Importing env vars from Vault, mount_point: '{self.mount_point}',"
             f" path: '{self.path}'"
         )
         url = os.getenv("VAULT_URL")
@@ -99,9 +99,7 @@ class EnvLoaderProvider(DependencyProvider):
 
         logging.info("Vars loaded from Vault:")
         for key, value in env_vars.items():
-            print(value)
             logging.info(f"{key}: {value}")
             os.environ[key] = value
-            print(os.getenv("VAR1"))
 
         logging.info("All vars loaded.")
