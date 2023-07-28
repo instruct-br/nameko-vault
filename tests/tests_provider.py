@@ -1,4 +1,3 @@
-import os
 from unittest.mock import patch, call, MagicMock
 
 from nameko.rpc import rpc
