@@ -1,3 +1,6 @@
+import logging
+import os
+
 import hvac
 from nameko.extensions import DependencyProvider
 
@@ -65,3 +68,38 @@ class VaultProvider(DependencyProvider):
             path=path,
         )
         return response.status_code
+
+
+class EnvLoaderProvider(DependencyProvider):
+    """
+    Starting from a `mount_point` and a `path`, get all environment variables
+    from Hashicorp Vault and inject those vars into the environment.
+    """
+
+    def __init__(self, mount_point: str, path: str):
+        self.mount_point = mount_point
+        self.path = path
+
+    def setup(self):
+        logging.info(
+            f"Importing environment variables from Vault, mount point: "
+            f"'{self.mount_point}', path: '{self.path}.'"
+        )
+        url = os.getenv("VAULT_URL")
+        token = os.getenv("VAULT_TOKEN")
+
+        client = hvac.Client(url=url)
+
+        if client.is_authenticated() is False:
+            client.token = token
+
+        env_vars = client.secrets.kv.read_secret_version(
+            mount_point=self.mount_point, path=self.path
+        )["data"]["data"]
+
+        logging.debug("Vars loaded from Vault:")
+        for key, value in env_vars.items():
+            logging.debug(f"- {key}")
+            os.environ[key] = value
+
+        logging.info("All variables loaded.")

@@ -1,7 +1,9 @@
+from unittest.mock import patch, call, MagicMock
+
 from nameko.rpc import rpc
 from nameko.testing.services import worker_factory
 
-from nameko_vault import VaultProvider
+from nameko_vault import VaultProvider, EnvLoaderProvider
 
 
 class TestVaultService:
@@ -92,3 +94,39 @@ def test_vault_service_delete_metadata_and_all_versions():
 
     assert service.delete_metadata_and_all_versions_secret(path) == mock_return
     method.assert_called_once_with(path)
+
+
+@patch("os.getenv")
+@patch("os.environ")
+def test_get_vars_from_vault(mocked_environ, mocked_getenv):
+    mocked_getenv.side_effect = lambda name: {
+        "VAULT_URL": "http://fake_vault_url",
+        "VAULT_TOKEN": "fake_vault_token",
+    }.get(name)
+
+    mock_client = MagicMock()
+    mock_client.is_authenticated.return_value = True
+    mock_client.secrets.kv.read_secret_version.return_value = {
+        "data": {
+            "data": {
+                "VAR1": "value1",
+                "VAR2": "value2",
+            }
+        }
+    }
+
+    with patch("hvac.Client", return_value=mock_client):
+        env_loader = EnvLoaderProvider("fake_mount_point", "fake_path")
+        env_loader.setup()
+
+        mocked_getenv.assert_any_call("VAULT_URL")
+        mocked_getenv.assert_any_call("VAULT_TOKEN")
+        mock_client.secrets.kv.read_secret_version.assert_called_once_with(
+            mount_point="fake_mount_point", path="fake_path"
+        )
+
+        expected_calls = [
+            call("VAR1", "value1"),
+            call("VAR2", "value2"),
+        ]
+        mocked_environ.__setitem__.assert_has_calls(expected_calls)
